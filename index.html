@@ -166,6 +166,11 @@ button{
     border:3px solid yellow;
 }
 
+.player.drag-over{
+    border:3px solid #00ff88;
+    background:#1a3a2a;
+}
+
 .ball{
     width:42px;
     height:28px;
@@ -385,6 +390,31 @@ function renderPlayers(){
             renderPlayers();
         });
 
+        playerDiv.addEventListener("dragover", (e)=>{
+
+            e.preventDefault();
+
+            playerDiv.classList.add("drag-over");
+        });
+
+        playerDiv.addEventListener("dragleave", ()=>{
+
+            playerDiv.classList.remove("drag-over");
+        });
+
+        playerDiv.addEventListener("drop", (e)=>{
+
+            e.preventDefault();
+
+            playerDiv.classList.remove("drag-over");
+
+            const basketIndex = parseInt(e.dataTransfer.getData("basket"));
+
+            if(isNaN(basketIndex)) return;
+
+            grabBallForPlayer(basketIndex, index);
+        });
+
         playerDiv.innerHTML = `
             <strong>
                 Player ${index+1}
@@ -499,18 +529,21 @@ function renderBaskets(){
 
             ${
                 basket.hasBall
-                ? `<div class="ball ${basket.color}"></div>`
+                ? `<div class="ball ${basket.color}"
+                    draggable="true"
+                    ondragstart="dragBasketBall(event,${index})"
+                  ></div>`
                 : `<div style="margin-top:8px;">Empty</div>`
             }
         `;
 
-        basketDiv.addEventListener("click", ()=>{
-
-            grabBall(index);
-        });
-
         div.appendChild(basketDiv);
     });
+}
+
+function dragBasketBall(event, basketIndex){
+
+    event.dataTransfer.setData("basket", basketIndex);
 }
 
 function canPlayerGrab(playerIndex){
@@ -522,9 +555,9 @@ function canPlayerGrab(playerIndex){
     return playerGrabs <= minimum;
 }
 
-function grabBall(index){
+function grabBallForPlayer(basketIndex, playerIndex){
 
-    let basket = baskets[index];
+    let basket = baskets[basketIndex];
 
     if(!basket.hasBall){
 
@@ -533,23 +566,30 @@ function grabBall(index){
         return;
     }
 
-    if(!canPlayerGrab(currentPlayer)){
+    if(!canPlayerGrab(playerIndex)){
 
         alert("You can't do that yet. Every player must grab before anyone grabs again.");
 
         return;
     }
 
-    players[currentPlayer].holding = basket.color;
+    if(players[playerIndex].holding){
 
-    players[currentPlayer].grabs++;
+        alert("Player is already holding a ball.");
+
+        return;
+    }
+
+    players[playerIndex].holding = basket.color;
+
+    players[playerIndex].grabs++;
 
     basket.hasBall = false;
 
     renderAll();
 
     log(
-        `Player ${currentPlayer+1} grabbed ${basket.color.toUpperCase()} from ${POSITION_NAMES[index]}`
+        `Player ${playerIndex+1} grabbed ${basket.color.toUpperCase()} from ${POSITION_NAMES[basketIndex]}`
     );
 }
 
