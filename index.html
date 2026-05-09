@@ -210,7 +210,7 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 1.9
+        Version 2.0
     </div>
 
     <button onclick="generatePuzzle()">Elapse DPS Phase</button>
@@ -421,7 +421,7 @@ function renderPlayers(){
 
         playerDiv.innerHTML = `
             <strong>
-                Player ${index+1}${index < 3 ? ' <span style="color:#aaa;font-size:12px;">(Plate)</span>' : ''}
+                Player ${index+1}${index < 3 ? ' <span style="color:gold;font-size:12px;">(Plate)</span>' : ''}
             </strong>
 
             ${
@@ -435,7 +435,7 @@ function renderPlayers(){
             }
 
             <div class="player-stats">
-                Total Grabs: <span style="font-weight:bold; color:#00ff88; font-size:15px;">${p.grabs}</span>
+                Total Grabs: <span style="font-weight:bold; color:${p.grabs < Math.max(...players.map(p=>p.grabs)) ? '#ff5050' : '#00ff88'}; font-size:15px;">${p.grabs}</span>
             </div>
         `;
 
