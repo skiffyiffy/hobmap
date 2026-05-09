@@ -78,6 +78,7 @@ button{
     align-items:center;
     justify-content:center;
     text-align:center;
+    transition:0.2s;
 }
 
 .basket{
@@ -156,15 +157,15 @@ button{
     font-family:monospace;
 }
 
-.revealed{
-    color:#00ff88;
-    font-size:11px;
-    margin-top:4px;
-}
-
 .ring-label{
     font-size:13px;
     font-weight:bold;
+}
+
+.player-stats{
+    font-size:13px;
+    margin-top:8px;
+    opacity:0.8;
 }
 
 </style>
@@ -174,7 +175,7 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 1.2
+        Version 1.3
     </div>
 
     <button onclick="generatePuzzle()">Generate Puzzle</button>
@@ -265,7 +266,8 @@ function generatePuzzle(){
     for(let i=0;i<6;i++){
 
         players.push({
-            holding:null
+            holding:null,
+            grabs:0
         });
     }
 
@@ -349,6 +351,10 @@ function renderPlayers(){
                 : `<div style="margin-top:10px;">Holding: Nothing</div>`
             }
 
+            <div class="player-stats">
+                Total Grabs: ${p.grabs}
+            </div>
+
             <br>
 
             <button class="check-btn">
@@ -391,6 +397,11 @@ function renderRings(){
 
         ring.className = "ring";
 
+        if(ringRevealed[i]){
+
+            ring.classList.add(ringSolution[i]);
+        }
+
         ring.style.left = `${x-47}px`;
         ring.style.top = `${y-47}px`;
 
@@ -406,14 +417,6 @@ function renderRings(){
             ${
                 ringFilled[i]
                 ? `<div class="ball ${ringFilled[i]}"></div>`
-                : ""
-            }
-
-            ${
-                ringRevealed[i]
-                ? `<div class="revealed">
-                    ${ringSolution[i].toUpperCase()}
-                   </div>`
                 : ""
             }
         `;
@@ -470,6 +473,15 @@ function renderBaskets(){
     });
 }
 
+function canPlayerGrab(playerIndex){
+
+    const playerGrabs = players[playerIndex].grabs;
+
+    let minimum = Math.min(...players.map(p => p.grabs));
+
+    return playerGrabs <= minimum;
+}
+
 function grabBall(index){
 
     let basket = baskets[index];
@@ -481,7 +493,16 @@ function grabBall(index){
         return;
     }
 
+    if(!canPlayerGrab(currentPlayer)){
+
+        alert("You can't do that yet. Every player must grab before anyone grabs again.");
+
+        return;
+    }
+
     players[currentPlayer].holding = basket.color;
+
+    players[currentPlayer].grabs++;
 
     basket.hasBall = false;
 
@@ -489,6 +510,40 @@ function grabBall(index){
 
     log(
         `Player ${currentPlayer+1} grabbed ${basket.color.toUpperCase()}`
+    );
+}
+
+function autoRevealRemainingColor(){
+
+    let revealedColors = [];
+
+    for(let i=0;i<5;i++){
+
+        if(ringRevealed[i]){
+
+            revealedColors.push(ringSolution[i]);
+        }
+    }
+
+    revealedColors = [...new Set(revealedColors)];
+
+    if(revealedColors.length !== 2){
+
+        return;
+    }
+
+    const missing = COLORS.find(c => !revealedColors.includes(c));
+
+    for(let i=0;i<5;i++){
+
+        if(ringSolution[i] === missing){
+
+            ringRevealed[i] = true;
+        }
+    }
+
+    log(
+        `Automatically revealed ${missing.toUpperCase()} via process of elimination`
     );
 }
 
@@ -505,8 +560,6 @@ function checkRingColors(playerIndex){
 
     players[playerIndex].holding = null;
 
-    // reveal matching rings
-
     for(let i=0;i<5;i++){
 
         if(ringSolution[i]===held){
@@ -515,7 +568,7 @@ function checkRingColors(playerIndex){
         }
     }
 
-    // determine current basket split
+    autoRevealRemainingColor();
 
     let colorCounts = {};
 
@@ -526,8 +579,6 @@ function checkRingColors(playerIndex){
         colorCounts[b.color]++;
     });
 
-    // identify dominant/minority counts
-
     let remainingColors = COLORS.filter(c => c !== held);
 
     let keptColor = remainingColors.find(c => colorCounts[c] > 0);
@@ -536,8 +587,6 @@ function checkRingColors(playerIndex){
 
     let keptCount = colorCounts[keptColor];
     let removedCount = colorCounts[held];
-
-    // rebuild exact same split
 
     let newPattern = [];
 
