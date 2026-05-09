@@ -494,6 +494,8 @@ function checkRingColors(playerIndex){
 
     players[playerIndex].holding = null;
 
+    // reveal rings
+
     for(let i=0;i<5;i++){
 
         if(ringSolution[i]===held){
@@ -502,24 +504,51 @@ function checkRingColors(playerIndex){
         }
     }
 
-    let remaining = COLORS.filter(c=>c!==held);
+    // count current basket colors
 
-    let pattern = [
-        remaining[0],
-        remaining[0],
-        remaining[0],
-        remaining[1],
-        remaining[1]
-    ];
+    let counts = {};
 
-    shuffle(pattern);
+    COLORS.forEach(c=>counts[c]=0);
+
+    baskets.forEach(b=>{
+
+        counts[b.color]++;
+    });
+
+    // remove checked color
+
+    const removedCount = counts[held];
+
+    counts[held] = 0;
+
+    // missing color
+
+    const missingColor = COLORS.find(c=>counts[c]===0);
+
+    // replace only removed quantity
+
+    counts[missingColor] = removedCount;
+
+    // rebuild basket layout
+
+    let newPattern = [];
+
+    COLORS.forEach(color=>{
+
+        for(let i=0;i<counts[color];i++){
+
+            newPattern.push(color);
+        }
+    });
+
+    shuffle(newPattern);
 
     baskets = [];
 
     for(let i=0;i<5;i++){
 
         baskets.push({
-            color:pattern[i],
+            color:newPattern[i],
             hasBall:i<4
         });
     }
