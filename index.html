@@ -210,7 +210,7 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 2.0
+        Version 2.1
     </div>
 
     <button onclick="generatePuzzle()">Elapse DPS Phase</button>
@@ -573,13 +573,6 @@ function grabBallForPlayer(basketIndex, playerIndex){
     if(!canPlayerGrab(playerIndex)){
 
         alert("You can't do that yet. Every player must grab before anyone grabs again.");
-
-        return;
-    }
-
-    if(players[playerIndex].holding){
-
-        alert("Player is already holding a ball.");
 
         return;
     }
