@@ -199,7 +199,7 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 1.6
+        Version 1.8
     </div>
 
     <button onclick="generatePuzzle()">Generate Puzzle</button>
@@ -241,14 +241,13 @@ button{
 
 const COLORS = ["white","red","blue"];
 
-// renamed positions
-
+// Positions arranged clockwise from top: top, mid-right, bottom-right, bottom-left, top-left
 const POSITION_NAMES = [
-    "4",
-    "T",
-    "1",
-    "2",
-    "3"
+    "3",   // top
+    "4",   // mid-right
+    "5",   // bot-right  (was "T")
+    "1",   // bot-left
+    "2"    // top-left
 ];
 
 let disabledBasket = -1;
@@ -462,6 +461,12 @@ function renderRings(){
                 ? `<div class="ball ${ringFilled[i]}"></div>`
                 : ""
             }
+
+            ${
+                i === disabledBasket
+                ? `<div class="disabled-x">X</div>`
+                : ``
+            }
         `;
 
         div.appendChild(ring);
@@ -504,12 +509,6 @@ function renderBaskets(){
                 basket.hasBall
                 ? `<div class="ball ${basket.color}"></div>`
                 : `<div style="margin-top:8px;">Empty</div>`
-            }
-
-            ${
-                index === disabledBasket
-                ? `<div class="disabled-x">X</div>`
-                : ``
             }
         `;
 
@@ -667,20 +666,20 @@ function alignBaskets(){
     baskets.forEach((basket,index)=>{
 
         basket.color = newPattern[index];
+
+        // do NOT restock — baskets keep their current hasBall state
     });
 
-    // clear rings
-
+    // clear only the balls placed in rings, but keep colors revealed
     ringFilled = [null,null,null,null,null];
 
-    // random disabled basket
-
+    // disabled position is one of the 5 inner rings (not the outer baskets)
     disabledBasket = Math.floor(Math.random()*5);
 
     renderAll();
 
     log(
-        `Aligned baskets and disabled ${POSITION_NAMES[disabledBasket]}`
+        `Aligned baskets and disabled inner ring ${POSITION_NAMES[disabledBasket]}`
     );
 }
 
@@ -698,6 +697,13 @@ function dropBall(event,ringIndex){
     const held = players[playerIndex].holding;
 
     if(!held){
+
+        return;
+    }
+
+    if(ringIndex === disabledBasket){
+
+        alert("This ring is disabled.");
 
         return;
     }
