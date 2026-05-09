@@ -1,140 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Ring Puzzle Simulator</title>
 
 <style>
-    body{
-        background:#111;
-        color:white;
-        font-family:Arial, Helvetica, sans-serif;
-        margin:0;
-        padding:20px;
-    }
 
-    h1,h2,h3{
-        margin-top:10px;
-    }
+body{
+    background:#111;
+    color:white;
+    font-family:Arial, Helvetica, sans-serif;
+    margin:0;
+    padding:20px;
+}
 
-    .section{
-        background:#1c1c1c;
-        border:1px solid #333;
-        border-radius:12px;
-        padding:16px;
-        margin-bottom:20px;
-    }
+h1,h2{
+    margin-top:0;
+}
 
-    .rings{
-        display:flex;
-        gap:20px;
-        flex-wrap:wrap;
-        margin-top:15px;
-    }
+.section{
+    background:#1c1c1c;
+    border:1px solid #333;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:20px;
+}
 
-    .ring{
-        width:90px;
-        height:90px;
-        border:6px solid #777;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:14px;
-        text-align:center;
-        position:relative;
-        background:#222;
-    }
+button{
+    padding:10px 14px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    margin:4px;
+}
 
-    .large-ring{
-        width:140px;
-        height:140px;
-        border:8px solid gold;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        margin-bottom:20px;
-        background:#222;
-    }
+.rings{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
 
-    .basket-row{
-        display:flex;
-        gap:15px;
-        flex-wrap:wrap;
-        margin-top:15px;
-    }
+.ring{
+    width:100px;
+    height:100px;
+    border:6px solid #777;
+    border-radius:50%;
+    background:#222;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
 
-    .basket{
-        width:100px;
-        height:100px;
-        border-radius:12px;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        font-weight:bold;
-        color:black;
-        border:3px solid white;
-    }
+.large-ring{
+    width:150px;
+    height:150px;
+    border:8px solid gold;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#222;
+    margin:auto;
+}
 
-    .player-grid{
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-        gap:15px;
-        margin-top:15px;
-    }
+.basket-row{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
 
-    .player{
-        background:#2a2a2a;
-        border-radius:12px;
-        padding:12px;
-        border:2px solid #444;
-    }
+.basket{
+    width:110px;
+    height:110px;
+    border-radius:14px;
+    border:3px solid white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
 
-    button{
-        padding:8px 12px;
-        margin:4px;
-        border:none;
-        border-radius:8px;
-        cursor:pointer;
-        font-weight:bold;
-    }
+.players{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:15px;
+}
 
-    .white{
-        background:white;
-        color:black;
-    }
+.player{
+    background:#2b2b2b;
+    border-radius:12px;
+    border:2px solid #444;
+    padding:14px;
+    cursor:pointer;
+    transition:0.15s;
+}
 
-    .red{
-        background:#ff4b4b;
-        color:white;
-    }
+.player:hover{
+    transform:scale(1.02);
+}
 
-    .blue{
-        background:#4b7bff;
-        color:white;
-    }
+.selected{
+    border:3px solid yellow;
+}
 
-    .gray{
-        background:#555;
-        color:white;
-    }
+.ball{
+    width:40px;
+    height:28px;
+    border-radius:50%;
+    border:2px solid black;
+    margin-top:8px;
+    cursor:grab;
+}
 
-    .selected{
-        outline:4px solid yellow;
-    }
+.white{
+    background:white;
+}
 
-    .log{
-        max-height:300px;
-        overflow:auto;
-        background:black;
-        padding:10px;
-        border-radius:10px;
-        font-family:monospace;
-    }
+.red{
+    background:#ff5050;
+}
+
+.blue{
+    background:#4d7dff;
+}
+
+.log{
+    background:black;
+    padding:12px;
+    border-radius:10px;
+    max-height:250px;
+    overflow:auto;
+    font-family:monospace;
+}
+
+.revealed{
+    color:#00ff88;
+    font-size:12px;
+    margin-top:6px;
+}
 
 </style>
 </head>
@@ -143,76 +152,73 @@
 <h1>Ring Puzzle Simulator</h1>
 
 <div class="section">
-    <h2>Controls</h2>
 
-    <button onclick="generatePuzzle()">Generate New Puzzle</button>
+    <button onclick="generatePuzzle()">Generate Puzzle</button>
     <button onclick="restockBaskets()">Restock Baskets</button>
-    <button onclick="resetAll()">Full Reset</button>
+    <button onclick="resetEverything()">Reset Everything</button>
 
-    <br><br>
-
-    Current Selected Player:
-    <select id="playerSelect" onchange="setCurrentPlayer()">
-        <option value="0">Player 1</option>
-        <option value="1">Player 2</option>
-        <option value="2">Player 3</option>
-        <option value="3">Player 4</option>
-        <option value="4">Player 5</option>
-        <option value="5">Player 6</option>
-    </select>
 </div>
 
 <div class="section">
+
     <h2>Large Reveal Ring</h2>
 
     <div class="large-ring">
-        Reveal Ring
+        Check Ring Colors
     </div>
+
 </div>
 
 <div class="section">
-    <h2>Small Rings</h2>
+
+    <h2>Rings</h2>
 
     <div class="rings" id="rings"></div>
+
 </div>
 
 <div class="section">
+
     <h2>Baskets</h2>
 
     <div class="basket-row" id="baskets"></div>
+
 </div>
 
 <div class="section">
+
     <h2>Players</h2>
 
-    <div class="player-grid" id="players"></div>
+    <div class="players" id="players"></div>
+
 </div>
 
 <div class="section">
+
     <h2>Log</h2>
 
     <div class="log" id="log"></div>
+
 </div>
 
 <script>
 
 const COLORS = ["white","red","blue"];
 
-let ringSolution = [];
-let ringFilled = [null,null,null,null,null];
-
-let baskets = [];
 let currentPlayer = 0;
 
 let players = [];
 
+let ringSolution = [];
+let ringFilled = [null,null,null,null,null];
+
+let ringRevealed = [false,false,false,false,false];
+
+let baskets = [];
+
 function log(msg){
     const div = document.getElementById("log");
     div.innerHTML = msg + "<br>" + div.innerHTML;
-}
-
-function randomChoice(arr){
-    return arr[Math.floor(Math.random()*arr.length)];
 }
 
 function shuffle(array){
@@ -222,11 +228,15 @@ function shuffle(array){
     }
 }
 
+function randomChoice(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+}
+
 function generatePuzzle(){
 
     ringFilled = [null,null,null,null,null];
+    ringRevealed = [false,false,false,false,false];
 
-    // Generate 2/2/1 split
     let colors = [...COLORS];
     shuffle(colors);
 
@@ -246,8 +256,7 @@ function generatePuzzle(){
 
     for(let i=0;i<6;i++){
         players.push({
-            holding:null,
-            pickups:0
+            holding:null
         });
     }
 
@@ -261,7 +270,9 @@ function generateBasketPattern(){
     let colors = [...COLORS];
     shuffle(colors);
 
-    baskets = [
+    baskets = [];
+
+    let pattern = [
         colors[0],
         colors[0],
         colors[0],
@@ -269,62 +280,20 @@ function generateBasketPattern(){
         colors[1]
     ];
 
-    shuffle(baskets);
+    shuffle(pattern);
+
+    pattern.forEach(color=>{
+        baskets.push({
+            color:color,
+            hasBall:true
+        });
+    });
 }
 
 function renderAll(){
-    renderRings();
-    renderBaskets();
     renderPlayers();
-}
-
-function renderRings(){
-
-    const div = document.getElementById("rings");
-    div.innerHTML = "";
-
-    for(let i=0;i<5;i++){
-
-        const r = document.createElement("div");
-        r.className = "ring";
-
-        let fill = ringFilled[i];
-
-        r.innerHTML = `
-            <div>
-                Ring ${i+1}<br>
-                ${fill ? fill.toUpperCase() : "EMPTY"}
-            </div>
-        `;
-
-        if(fill){
-            r.style.background = fill;
-            r.style.color = fill==="white" ? "black" : "white";
-        }
-
-        div.appendChild(r);
-    }
-}
-
-function renderBaskets(){
-
-    const div = document.getElementById("baskets");
-    div.innerHTML = "";
-
-    baskets.forEach((color,index)=>{
-
-        const b = document.createElement("div");
-        b.className = `basket ${color}`;
-
-        b.innerHTML = `
-            Basket ${index+1}<br>
-            ${color.toUpperCase()}
-        `;
-
-        b.onclick = ()=>grabBall(index);
-
-        div.appendChild(b);
-    });
+    renderBaskets();
+    renderRings();
 }
 
 function renderPlayers(){
@@ -334,84 +303,156 @@ function renderPlayers(){
 
     players.forEach((p,index)=>{
 
-        const d = document.createElement("div");
+        const playerDiv = document.createElement("div");
 
-        d.className = "player";
+        playerDiv.className = "player";
 
         if(index===currentPlayer){
-            d.classList.add("selected");
+            playerDiv.classList.add("selected");
         }
 
-        d.innerHTML = `
-            <h3>Player ${index+1}</h3>
+        playerDiv.onclick = ()=>{
+            currentPlayer = index;
+            renderPlayers();
+        };
+
+        playerDiv.innerHTML = `
+            <h3>
+                Player ${index+1}
+            </h3>
 
             Holding:
-            <strong>
-                ${p.holding ? p.holding.toUpperCase() : "NOTHING"}
-            </strong>
+            ${p.holding ? `
+                <div 
+                    class="ball ${p.holding}" 
+                    draggable="true"
+                    ondragstart="dragBall(event, ${index})"
+                ></div>
+            ` : "Nothing"}
 
-            <br><br>
+            <br>
 
-            Pickups: ${p.pickups}
-
-            <br><br>
-
-            <button onclick="revealBall(${index})">
-                Reveal Ball
-            </button>
-
-            <button onclick="placeBall(${index})">
-                Place Ball
+            <button onclick="checkRingColors(${index})">
+                Check Ring Colors
             </button>
         `;
 
-        div.appendChild(d);
+        div.appendChild(playerDiv);
     });
 }
 
-function setCurrentPlayer(){
-    currentPlayer = parseInt(document.getElementById("playerSelect").value);
-    renderPlayers();
+function renderBaskets(){
+
+    const div = document.getElementById("baskets");
+
+    div.innerHTML = "";
+
+    baskets.forEach((basket,index)=>{
+
+        const basketDiv = document.createElement("div");
+
+        basketDiv.className = `basket ${basket.color}`;
+
+        basketDiv.innerHTML = `
+            Basket ${index+1}
+            <br>
+            ${basket.color.toUpperCase()}
+            ${basket.hasBall ? `
+                <div class="ball ${basket.color}"></div>
+            ` : ""}
+        `;
+
+        basketDiv.onclick = ()=>{
+            grabBall(index);
+        };
+
+        div.appendChild(basketDiv);
+    });
 }
 
-function grabBall(basketIndex){
+function renderRings(){
 
-    const color = baskets[basketIndex];
+    const div = document.getElementById("rings");
 
-    players[currentPlayer].holding = color;
-    players[currentPlayer].pickups++;
+    div.innerHTML = "";
 
-    baskets.splice(basketIndex,1);
+    for(let i=0;i<5;i++){
+
+        const ring = document.createElement("div");
+
+        ring.className = "ring";
+
+        ring.ondragover = (e)=>{
+            e.preventDefault();
+        };
+
+        ring.ondrop = (e)=>{
+            dropBall(e,i);
+        };
+
+        ring.innerHTML = `
+            <strong>Ring ${i+1}</strong>
+
+            ${
+                ringFilled[i]
+                ? `<div class="ball ${ringFilled[i]}"></div>`
+                : ""
+            }
+
+            ${
+                ringRevealed[i]
+                ? `<div class="revealed">
+                    Needs ${ringSolution[i].toUpperCase()}
+                   </div>`
+                : ""
+            }
+        `;
+
+        div.appendChild(ring);
+    }
+}
+
+function grabBall(index){
+
+    let basket = baskets[index];
+
+    if(!basket.hasBall){
+        alert("No ball in basket.");
+        return;
+    }
+
+    players[currentPlayer].holding = basket.color;
+
+    basket.hasBall = false;
 
     renderAll();
 
-    log(`Player ${currentPlayer+1} grabbed ${color.toUpperCase()}`);
+    log(
+        `Player ${currentPlayer+1} grabbed ${basket.color.toUpperCase()}`
+    );
 }
 
-function revealBall(playerIndex){
+function checkRingColors(playerIndex){
 
     let held = players[playerIndex].holding;
 
     if(!held){
-        alert("Player holding nothing.");
+        alert("Player not holding a ball.");
         return;
     }
 
     players[playerIndex].holding = null;
 
-    let matches = [];
-
     for(let i=0;i<5;i++){
+
         if(ringSolution[i]===held){
-            matches.push(i+1);
+            ringRevealed[i] = true;
         }
     }
 
-    // reroll baskets using OTHER TWO COLORS
-
     let remaining = COLORS.filter(c=>c!==held);
 
-    baskets = [
+    let pattern = [
         remaining[0],
         remaining[0],
         remaining[0],
@@ -419,85 +460,85 @@ function revealBall(playerIndex){
         remaining[1]
     ];
 
-    shuffle(baskets);
+    shuffle(pattern);
 
-    baskets.pop();
+    baskets = [];
+
+    for(let i=0;i<5;i++){
+
+        baskets.push({
+            color:pattern[i],
+            hasBall:i<4
+        });
+    }
 
     renderAll();
 
     log(
-        `Player ${playerIndex+1} revealed ${held.toUpperCase()} -> Rings ${matches.join(", ")}`
+        `Player ${playerIndex+1} checked ${held.toUpperCase()}`
     );
 }
 
-function placeBall(playerIndex){
+function dragBall(event,playerIndex){
 
-    let held = players[playerIndex].holding;
+    event.dataTransfer.setData("player",playerIndex);
+}
+
+function dropBall(event,ringIndex){
+
+    const playerIndex = parseInt(
+        event.dataTransfer.getData("player")
+    );
+
+    const held = players[playerIndex].holding;
 
     if(!held){
-        alert("No ball held.");
         return;
     }
 
-    let ringNum = prompt("Place into which ring? (1-5)");
-
-    ringNum = parseInt(ringNum)-1;
-
-    if(ringNum<0 || ringNum>4){
+    if(!ringRevealed[ringIndex]){
+        alert("Ring color has not been revealed yet.");
         return;
     }
 
-    ringFilled[ringNum] = held;
+    if(ringSolution[ringIndex]!==held){
+        alert("Wrong color for this ring.");
+        return;
+    }
+
+    ringFilled[ringIndex] = held;
 
     players[playerIndex].holding = null;
 
     renderAll();
 
     log(
-        `Player ${playerIndex+1} placed ${held.toUpperCase()} into Ring ${ringNum+1}`
+        `Player ${playerIndex+1} placed ${held.toUpperCase()} into Ring ${ringIndex+1}`
     );
 }
 
 function restockBaskets(){
 
-    while(baskets.length<5){
-
-        let needed = [];
-
-        for(let i=0;i<5;i++){
-
-            if(ringFilled[i]===null){
-                needed.push(ringSolution[i]);
-            }
-        }
-
-        if(needed.length===0){
-            generateBasketPattern();
-            break;
-        }
-
-        baskets.push(randomChoice(needed));
-    }
-
-    shuffle(baskets);
+    baskets.forEach(b=>{
+        b.hasBall = true;
+    });
 
     renderAll();
 
     log("Baskets restocked.");
 }
 
-function resetAll(){
+function resetEverything(){
 
     ringSolution = [];
     ringFilled = [null,null,null,null,null];
+    ringRevealed = [false,false,false,false,false];
     baskets = [];
     players = [];
 
-    renderAll();
-
     document.getElementById("log").innerHTML = "";
 
-    log("Reset everything.");
+    generatePuzzle();
 }
 
 generatePuzzle();
