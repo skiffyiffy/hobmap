@@ -33,6 +33,13 @@ button{
     padding:12px;
     border-radius:12px;
     border:1px solid #333;
+    min-width:220px;
+}
+
+.version{
+    color:#00ff88;
+    font-weight:bold;
+    margin-bottom:10px;
 }
 
 .game-area{
@@ -165,6 +172,10 @@ button{
 <body>
 
 <div class="controls">
+
+    <div class="version">
+        Version 1.2
+    </div>
 
     <button onclick="generatePuzzle()">Generate Puzzle</button>
     <button onclick="restockBaskets()">Restock Baskets</button>
@@ -494,7 +505,7 @@ function checkRingColors(playerIndex){
 
     players[playerIndex].holding = null;
 
-    // reveal rings
+    // reveal matching rings
 
     for(let i=0;i<5;i++){
 
@@ -504,42 +515,41 @@ function checkRingColors(playerIndex){
         }
     }
 
-    // count current basket colors
+    // determine current basket split
 
-    let counts = {};
+    let colorCounts = {};
 
-    COLORS.forEach(c=>counts[c]=0);
+    COLORS.forEach(c => colorCounts[c] = 0);
 
-    baskets.forEach(b=>{
+    baskets.forEach(b => {
 
-        counts[b.color]++;
+        colorCounts[b.color]++;
     });
 
-    // remove checked color
+    // identify dominant/minority counts
 
-    const removedCount = counts[held];
+    let remainingColors = COLORS.filter(c => c !== held);
 
-    counts[held] = 0;
+    let keptColor = remainingColors.find(c => colorCounts[c] > 0);
 
-    // missing color
+    let missingColor = remainingColors.find(c => colorCounts[c] === 0);
 
-    const missingColor = COLORS.find(c=>counts[c]===0);
+    let keptCount = colorCounts[keptColor];
+    let removedCount = colorCounts[held];
 
-    // replace only removed quantity
-
-    counts[missingColor] = removedCount;
-
-    // rebuild basket layout
+    // rebuild exact same split
 
     let newPattern = [];
 
-    COLORS.forEach(color=>{
+    for(let i=0;i<keptCount;i++){
 
-        for(let i=0;i<counts[color];i++){
+        newPattern.push(keptColor);
+    }
 
-            newPattern.push(color);
-        }
-    });
+    for(let i=0;i<removedCount;i++){
+
+        newPattern.push(missingColor);
+    }
 
     shuffle(newPattern);
 
