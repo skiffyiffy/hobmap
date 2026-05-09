@@ -210,7 +210,7 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 2.1
+        Version 2.2
     </div>
 
     <button onclick="generatePuzzle()">Elapse DPS Phase</button>
@@ -435,7 +435,7 @@ function renderPlayers(){
             }
 
             <div class="player-stats">
-                Total Grabs: <span style="font-weight:bold; color:${p.grabs < Math.max(...players.map(p=>p.grabs)) ? '#ff5050' : '#00ff88'}; font-size:15px;">${p.grabs}</span>
+                <span style="font-size:26px;">Total Grabs: <span style="font-weight:bold; color:${p.grabs < Math.max(...players.map(p=>p.grabs)) ? '#ff5050' : '#00ff88'}; font-size:30px;">${p.grabs}</span></span>
             </div>
         `;
 
