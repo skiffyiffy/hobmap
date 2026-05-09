@@ -175,7 +175,7 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 1.4
+        Version 1.5
     </div>
 
     <button onclick="generatePuzzle()">Generate Puzzle</button>
@@ -561,6 +561,8 @@ function checkRingColors(playerIndex){
 
     players[playerIndex].holding = null;
 
+    // reveal matching rings
+
     for(let i=0;i<5;i++){
 
         if(ringSolution[i]===held){
@@ -570,6 +572,33 @@ function checkRingColors(playerIndex){
     }
 
     autoRevealRemainingColor();
+
+    // CHANGE basket colors without refilling
+
+    let currentColors = baskets.map(b => b.color);
+
+    let remainingColors = COLORS.filter(c => c !== held);
+
+    let keptColor = remainingColors.find(c => currentColors.includes(c));
+
+    let newColor = remainingColors.find(c => !currentColors.includes(c));
+
+    let newPattern = currentColors.map(color => {
+
+        if(color === held){
+
+            return newColor;
+        }
+
+        return color;
+    });
+
+    shuffle(newPattern);
+
+    baskets.forEach((basket,index)=>{
+
+        basket.color = newPattern[index];
+    });
 
     renderAll();
 
