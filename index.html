@@ -263,6 +263,8 @@ const POSITION_NAMES = [
 
 let disabledBasket = -1;
 
+let isAligned = false;
+
 let currentPlayer = 0;
 
 let players = [];
@@ -293,6 +295,8 @@ function shuffle(array){
 function generatePuzzle(){
 
     disabledBasket = -1;
+
+    isAligned = false;
 
     // reset rings — new random solution, all unrevealed, no balls placed
     ringFilled = [null,null,null,null,null];
@@ -417,7 +421,7 @@ function renderPlayers(){
 
         playerDiv.innerHTML = `
             <strong>
-                Player ${index+1}
+                Player ${index+1}${index < 3 ? ' <span style="color:#aaa;font-size:12px;">(Plate)</span>' : ''}
             </strong>
 
             ${
@@ -701,6 +705,8 @@ function alignBaskets(){
     // disabled position is one of the 5 inner rings (not the outer baskets)
     disabledBasket = Math.floor(Math.random()*5);
 
+    isAligned = true;
+
     renderAll();
 
     log(
@@ -729,6 +735,13 @@ function dropBall(event,ringIndex){
     if(ringIndex === disabledBasket){
 
         alert("This ring is disabled.");
+
+        return;
+    }
+
+    if(isAligned && playerIndex < 3){
+
+        alert("Plate players cannot place balls into rings during alignment.");
 
         return;
     }
@@ -775,6 +788,8 @@ function resetEverything(){
     document.getElementById("log").innerHTML = "";
 
     disabledBasket = -1;
+
+    isAligned = false;
 
     ringFilled = [null,null,null,null,null];
 
