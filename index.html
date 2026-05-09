@@ -71,9 +71,9 @@ button{
 
 .large-ring{
     position:absolute;
-    width:170px;
-    height:170px;
-    border:8px solid gold;
+    width:90px;
+    height:90px;
+    border:5px solid gold;
     border-radius:50%;
     background:#222;
     left:50%;
@@ -83,8 +83,14 @@ button{
     align-items:center;
     justify-content:center;
     text-align:center;
-    font-size:20px;
+    font-size:12px;
     font-weight:bold;
+    cursor:pointer;
+    transition:box-shadow 0.15s;
+}
+
+.large-ring.drag-over{
+    box-shadow:0 0 20px 6px gold;
 }
 
 .ring{
@@ -227,7 +233,7 @@ button{
 
 <div class="game-area">
 
-    <div class="large-ring">
+    <div class="large-ring" id="large-ring">
         Run through<br>Middle
     </div>
 
@@ -397,22 +403,7 @@ function renderPlayers(){
             <div class="player-stats">
                 Total Grabs: ${p.grabs}
             </div>
-
-            <br>
-
-            <button class="check-btn">
-                Run through Middle
-            </button>
         `;
-
-        const btn = playerDiv.querySelector(".check-btn");
-
-        btn.addEventListener("click",(e)=>{
-
-            e.stopPropagation();
-
-            checkRingColors(index);
-        });
 
         div.appendChild(playerDiv);
     });
@@ -781,6 +772,34 @@ function resetEverything(){
 resetEverything();
 
 window.addEventListener("resize", renderAll);
+
+// Wire drag-drop onto the center large-ring
+const largeRing = document.getElementById("large-ring");
+
+largeRing.addEventListener("dragover", (e)=>{
+
+    e.preventDefault();
+
+    largeRing.classList.add("drag-over");
+});
+
+largeRing.addEventListener("dragleave", ()=>{
+
+    largeRing.classList.remove("drag-over");
+});
+
+largeRing.addEventListener("drop", (e)=>{
+
+    e.preventDefault();
+
+    largeRing.classList.remove("drag-over");
+
+    const playerIndex = parseInt(e.dataTransfer.getData("player"));
+
+    if(isNaN(playerIndex)) return;
+
+    checkRingColors(playerIndex);
+});
 
 </script>
 
