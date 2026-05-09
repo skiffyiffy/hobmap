@@ -210,7 +210,7 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 2.2
+        Version 2.3
     </div>
 
     <button onclick="generatePuzzle()">Elapse DPS Phase</button>
@@ -251,6 +251,10 @@ button{
 <script>
 
 const COLORS = ["white","red","blue"];
+
+function playerName(index){
+    return index < 3 ? `Plate ${index+1}` : `Dunk ${index-2}`;
+}
 
 // Positions arranged clockwise from top: top, mid-right, bottom-right, bottom-left, top-left
 const POSITION_NAMES = [
@@ -420,8 +424,8 @@ function renderPlayers(){
         });
 
         playerDiv.innerHTML = `
-            <strong>
-                Player ${index+1}${index < 3 ? ' <span style="color:gold;font-size:12px;">(Plate)</span>' : ''}
+            <strong style="color:${index < 3 ? 'gold' : '#7ec8e3'};">
+                ${index < 3 ? `Plate ${index+1}` : `Dunk ${index-2}`}
             </strong>
 
             ${
@@ -586,7 +590,7 @@ function grabBallForPlayer(basketIndex, playerIndex){
     renderAll();
 
     log(
-        `Player ${playerIndex+1} grabbed ${basket.color.toUpperCase()} from ${POSITION_NAMES[basketIndex]}`
+        `${playerName(playerIndex)} grabbed ${basket.color.toUpperCase()} from ${POSITION_NAMES[basketIndex]}`
     );
 }
 
@@ -675,7 +679,7 @@ function checkRingColors(playerIndex){
     renderAll();
 
     log(
-        `Player ${playerIndex+1} checked ${held.toUpperCase()}`
+        `${playerName(playerIndex)} checked ${held.toUpperCase()}`
     );
 }
 
@@ -760,7 +764,7 @@ function dropBall(event,ringIndex){
     renderAll();
 
     log(
-        `Player ${playerIndex+1} placed ${held.toUpperCase()} into ${POSITION_NAMES[ringIndex]}`
+        `${playerName(playerIndex)} placed ${held.toUpperCase()} into ${POSITION_NAMES[ringIndex]}`
     );
 }
 
