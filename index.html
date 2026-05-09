@@ -202,7 +202,7 @@ button{
         Version 1.9
     </div>
 
-    <button onclick="generatePuzzle()">Generate Puzzle</button>
+    <button onclick="generatePuzzle()">Elapse DPS Phase</button>
     <button onclick="alignBaskets()">Align</button>
     <button onclick="restockBaskets()">Kill Hydra</button>
     <button onclick="resetEverything()">Reset</button>
@@ -283,6 +283,7 @@ function generatePuzzle(){
 
     disabledBasket = -1;
 
+    // reset rings — new random solution, all unrevealed, no balls placed
     ringFilled = [null,null,null,null,null];
 
     ringRevealed = [false,false,false,false,false];
@@ -301,21 +302,21 @@ function generatePuzzle(){
 
     shuffle(ringSolution);
 
+    // reroll basket colors with a fresh 3/2 split, preserve hasBall state
+    let prevHasBall = baskets.map(b => b.hasBall);
+
     generateBasketPattern();
 
-    players = [];
+    baskets.forEach((b, i) => {
 
-    for(let i=0;i<6;i++){
+        b.hasBall = prevHasBall[i] !== undefined ? prevHasBall[i] : true;
+    });
 
-        players.push({
-            holding:null,
-            grabs:0
-        });
-    }
+    // preserve players — do NOT reset holding or grabs
 
     renderAll();
 
-    log("Generated puzzle.");
+    log("Elapsed DPS Phase.");
 }
 
 function generateBasketPattern(){
@@ -742,10 +743,42 @@ function resetEverything(){
 
     document.getElementById("log").innerHTML = "";
 
-    generatePuzzle();
+    disabledBasket = -1;
+
+    ringFilled = [null,null,null,null,null];
+
+    ringRevealed = [false,false,false,false,false];
+
+    let colors = [...COLORS];
+
+    shuffle(colors);
+
+    ringSolution = [
+        colors[0],
+        colors[0],
+        colors[1],
+        colors[1],
+        colors[2]
+    ];
+
+    shuffle(ringSolution);
+
+    generateBasketPattern();
+
+    players = [];
+
+    for(let i=0;i<6;i++){
+
+        players.push({
+            holding:null,
+            grabs:0
+        });
+    }
+
+    renderAll();
 }
 
-generatePuzzle();
+resetEverything();
 
 window.addEventListener("resize", renderAll);
 
