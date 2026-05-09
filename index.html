@@ -175,10 +175,11 @@ button{
 <div class="controls">
 
     <div class="version">
-        Version 1.3
+        Version 1.4
     </div>
 
     <button onclick="generatePuzzle()">Generate Puzzle</button>
+    <button onclick="alignBaskets()">Align</button>
     <button onclick="restockBaskets()">Restock Baskets</button>
     <button onclick="resetEverything()">Reset</button>
 
@@ -543,7 +544,7 @@ function autoRevealRemainingColor(){
     }
 
     log(
-        `Automatically revealed ${missing.toUpperCase()} via process of elimination`
+        `Automatically revealed ${missing.toUpperCase()}`
     );
 }
 
@@ -570,53 +571,27 @@ function checkRingColors(playerIndex){
 
     autoRevealRemainingColor();
 
-    let colorCounts = {};
-
-    COLORS.forEach(c => colorCounts[c] = 0);
-
-    baskets.forEach(b => {
-
-        colorCounts[b.color]++;
-    });
-
-    let remainingColors = COLORS.filter(c => c !== held);
-
-    let keptColor = remainingColors.find(c => colorCounts[c] > 0);
-
-    let missingColor = remainingColors.find(c => colorCounts[c] === 0);
-
-    let keptCount = colorCounts[keptColor];
-    let removedCount = colorCounts[held];
-
-    let newPattern = [];
-
-    for(let i=0;i<keptCount;i++){
-
-        newPattern.push(keptColor);
-    }
-
-    for(let i=0;i<removedCount;i++){
-
-        newPattern.push(missingColor);
-    }
-
-    shuffle(newPattern);
-
-    baskets = [];
-
-    for(let i=0;i<5;i++){
-
-        baskets.push({
-            color:newPattern[i],
-            hasBall:i<4
-        });
-    }
-
     renderAll();
 
     log(
         `Player ${playerIndex+1} checked ${held.toUpperCase()}`
     );
+}
+
+function alignBaskets(){
+
+    let newPattern = [...ringSolution];
+
+    shuffle(newPattern);
+
+    baskets.forEach((basket,index)=>{
+
+        basket.color = newPattern[index];
+    });
+
+    renderAll();
+
+    log("Aligned baskets to ring colors.");
 }
 
 function dragBall(event,playerIndex){
